@@ -2,7 +2,7 @@
   'use strict';
 
   // ⚠️ Completá esto con la URL de tu implementación de Apps Script (termina en /exec).
-  var API_URL = 'PEGA_ACA_LA_URL_DE_TU_APPS_SCRIPT/exec';
+  var API_URL = 'https://script.google.com/macros/s/AKfycbz4fb2tMMNBzu995lUMVC9qxrKW4hojFaf4qiMSPng2XmimVmseZfYizlLHQZb9hb7R/exec';
 
   var productos = [];
   var secciones = [];
