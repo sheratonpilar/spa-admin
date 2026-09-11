@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Health & Spa — Panel de Administración</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Karla:wght@400;500;700&family=Oswald:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<link rel="stylesheet" href="./assets/css/admin.css">
+</head>
+<body>
+<div class="layout">
+  <aside class="sidebar">
+    <div class="brand">Health &amp; Spa</div>
+    <div class="brand-sub">Panel de gestión</div>
+    <nav><div class="active">Carta</div></nav>
+    <button class="btn-clave" id="btnClave">🔑 Clave de edición</button>
+  </aside>
+
+  <main class="main">
+    <h1>Carta digital</h1>
+    <p class="subtitle">Editá precios, dá de baja platos y armá una experiencia de spa. Los cambios se reflejan en la carta cuando corras <b>Cartas ▸ Publicar</b> en el Sheet.</p>
+
+    <div class="cards">
+      <div class="card"><div class="num" id="statActivos">—</div><div class="label">Productos activos</div></div>
+      <div class="card"><div class="num" id="statCategorias">—</div><div class="label">Categorías</div></div>
+      <div class="card"><div class="num" id="statActualizado">—</div><div class="label">Última actualización</div></div>
+    </div>
+
+    <div class="toolbar">
+      <input type="search" id="buscar" placeholder="Buscar producto…">
+      <select id="filtroCategoria"><option value="">Todas las categorías</option></select>
+      <div class="spacer"></div>
+      <button class="btn" id="btnExportar">Exportar Excel</button>
+      <label class="btn" for="inputImportar" style="margin:0;">Importar Excel</label>
+      <input type="file" id="inputImportar" accept=".xlsx" style="display:none;">
+      <button class="btn" id="btnHistorial">Ver historial</button>
+      <button class="btn" id="btnNuevaCategoria">+ Nueva categoría</button>
+      <button class="btn btn-primary" id="btnNuevoProducto">+ Nuevo producto</button>
+    </div>
+
+    <table>
+      <thead>
+        <tr><th>Categoría</th><th>Producto</th><th>Precio</th><th>Disponible</th><th></th></tr>
+      </thead>
+      <tbody id="tbody"></tbody>
+    </table>
+  </main>
+</div>
+
+<div class="modal-backdrop" id="modalProducto">
+  <div class="modal">
+    <h2>Nuevo producto</h2>
+    <div class="field"><label>Categoría</label><select id="npCategoria"></select></div>
+    <div class="field"><label>Nombre</label><input id="npNombre" type="text" placeholder="Ej: Masaje Relajante 40'"></div>
+    <div class="field"><label>Descripción (opcional)</label><textarea id="npDescripcion"></textarea></div>
+    <div class="field"><label>Precio (número, o "CONSULTAR")</label><input id="npPrecio" type="text" placeholder="Ej: 95000"></div>
+    <p class="error-text" id="npError"></p>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" data-cerrar="modalProducto">Cancelar</button>
+      <button class="btn btn-primary" id="npGuardar">Crear producto</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-backdrop" id="modalCategoria">
+  <div class="modal">
+    <h2>Nueva categoría</h2>
+    <div class="field"><label>Nombre</label><input id="ncNombre" type="text" placeholder="Ej: Rituales de Pareja"></div>
+    <div class="field"><label>Nota / aclaración (opcional)</label><textarea id="ncNota"></textarea></div>
+    <p class="error-text" id="ncError"></p>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" data-cerrar="modalCategoria">Cancelar</button>
+      <button class="btn btn-primary" id="ncGuardar">Crear categoría</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-backdrop" id="modalHistorial">
+  <div class="modal" style="max-width: 40rem;">
+    <h2>Historial de precios</h2>
+    <table style="border:1px solid var(--rule);">
+      <thead><tr><th>Fecha</th><th>Producto</th><th>Antes</th><th>Después</th><th>Usuario</th></tr></thead>
+      <tbody id="tbodyHistorial"></tbody>
+    </table>
+    <div class="modal-actions">
+      <button class="btn" data-cerrar="modalHistorial">Cerrar</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-backdrop" id="modalTraducciones">
+  <div class="modal">
+    <h2>Traducciones — <span id="trNombreProducto"></span></h2>
+    <div class="field"><label>Nombre (EN)</label><input id="trNombreEn" type="text"></div>
+    <div class="field"><label>Descripción (EN)</label><textarea id="trDescEn"></textarea></div>
+    <div class="field"><label>Nombre (PT)</label><input id="trNombrePt" type="text"></div>
+    <div class="field"><label>Descripción (PT)</label><textarea id="trDescPt"></textarea></div>
+    <p class="error-text" id="trError"></p>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" data-cerrar="modalTraducciones">Cancelar</button>
+      <button class="btn btn-primary" id="trGuardar">Guardar traducciones</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-backdrop" id="modalEspanol">
+  <div class="modal">
+    <h2>Editar descripción (Español)</h2>
+    <div class="field"><label>Nombre</label><input id="esNombre" type="text"></div>
+    <div class="field"><label>Descripción</label><textarea id="esDescripcion"></textarea></div>
+    <p class="error-text" id="esError"></p>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" data-cerrar="modalEspanol">Cancelar</button>
+      <button class="btn btn-primary" id="esGuardar">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="./assets/js/admin.js"></script>
+</body>
+</html>
