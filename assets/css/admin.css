@@ -44,6 +44,8 @@ button { font-family: 'Karla', sans-serif; cursor: pointer; }
 .btn:hover { border-color: var(--accent-soft); }
 .btn-primary { background: var(--accent); border-color: var(--accent); color: #fff; }
 .btn-primary:hover { opacity: 0.92; }
+.btn-publish { background: var(--gold); border-color: var(--gold); color: #fff; font-weight: 600; }
+.btn-publish:hover { opacity: 0.9; }
 .btn-ghost { background: transparent; border-color: transparent; color: var(--ink-soft); }
 
 table { width: 100%; border-collapse: collapse; background: var(--surface); border: 1px solid var(--rule); border-radius: 6px; overflow: hidden; }
