@@ -2,7 +2,7 @@
   'use strict';
 
   // ⚠️ Completá esto con la URL de tu implementación de Apps Script (termina en /exec).
-  var API_URL = 'https://script.google.com/macros/s/AKfycbxHHrSJO9ZhYkY0qkFamg5pujlEYoKm0qWNlt-t_ZXIyMpowv-nBsaWIbm9-0Ons8Mf/exec';
+  var API_URL = 'PEGA_ACA_LA_URL_DE_TU_APPS_SCRIPT/exec';
 
   var productos = [];
   var secciones = [];
@@ -361,6 +361,30 @@
     };
     reader.readAsArrayBuffer(file);
     e.target.value = '';
+  });
+
+  // ---------------- Publicar ----------------
+  document.getElementById('btnPublicar').addEventListener('click', async function () {
+    var btn = this;
+    btn.disabled = true; btn.textContent = 'Revisando…';
+    try {
+      var prev = await apiGet('preview_publicar');
+      if (prev.errores && prev.errores.length) {
+        toast('No se puede publicar, hay errores en el Sheet: ' + prev.errores[0], true);
+        console.warn(prev.errores);
+        return;
+      }
+      var deltaTxt = prev.delta === null ? ' (primera publicación)'
+        : prev.delta === 0 ? '' : (prev.delta > 0 ? ' (+' + prev.delta + ' vs. lo publicado)' : ' (' + prev.delta + ' vs. lo publicado)');
+      if (!confirm('Publicar la carta con ' + prev.items + ' ítems' + deltaTxt + '.\n\n¿Confirmar?')) return;
+      btn.textContent = 'Publicando…';
+      var r = await apiPost('publicar', {});
+      toast('Publicado (' + r.items + ' ítems). La web tarda 30–60s en actualizarse.');
+    } catch (e) {
+      toast(e.message, true);
+    } finally {
+      btn.disabled = false; btn.textContent = '🚀 Publicar carta';
+    }
   });
 
   cargarTodo();
